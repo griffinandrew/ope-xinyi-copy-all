@@ -45,6 +45,10 @@ USER ${NB_UID}
 # sometimes there are problems with the existing version of installed python packages
 # these need to be installed to the prerequisite versions before we can install the rest of the
 # packages
+#adding this script to correct error related to unable to get mamba
+
+RUN conda update conda
+
 RUN mamba install --quiet --yes \
     ${PYTHON_PREREQ_VERSIONS} && \
     fix-permissions "${CONDA_DIR}" && \
@@ -117,31 +121,33 @@ RUN touch /home/${NB_USER}/.hushlogin && \
     fix-permissions "/home/${NB_USER}"
 
 # adding our custom OPE version of RISE for lab -- remove once main RISE is fixed
-RUN  wget -O - https://dl.yarnpkg.com/debian/pubkey.gpg 2> /dev/null | sudo apt-key add - && \
- echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
- sudo apt-get update -y && \
- sudo apt-get install yarn -y && \
- mkdir /home/RISE && \
- chown jovyan /home/RISE && \
- fix-permissions /home/RISE
+# NOTE: getting rid of rise pull as not used for verifying checksum 
 
-USER $NB_USER
-RUN  git clone https://github.com/OPEFFORT/RISE.git /home/RISE  && \
- cd /home/RISE && \
- git checkout dev && \
- yarn install && \
- yarn run build && \
- pip install -e . && \
- jupyter server extension enable rise && \
- jupyter serverextension enable rise && \
- jupyter labextension develop --overwrite . && \
- jupyter-nbextension install rise --py --sys-prefix --symlink && \
- jupyter-nbextension enable rise --py --sys-prefix && \
- rm -rf /tmp/yarn* /tmp/nodejs* /tmp/npm* /tmp/v8* && \
- cd -
+#RUN  wget -O - https://dl.yarnpkg.com/debian/pubkey.gpg 2> /dev/null | sudo apt-key add - && \
+# echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
+# sudo apt-get update -y && \
+# sudo apt-get install yarn -y && \
+# mkdir /home/RISE && \
+# chown jovyan /home/RISE && \
+# fix-permissions /home/RISE
+
+#USER $NB_USER
+#RUN  git clone https://github.com/OPEFFORT/RISE.git /home/RISE  && \
+# cd /home/RISE && \
+# git checkout dev && \
+# yarn install && \
+# yarn run build && \
+# pip install -e . && \
+# jupyter server extension enable rise && \
+# jupyter serverextension enable rise && \
+# jupyter labextension develop --overwrite . && \
+# jupyter-nbextension install rise --py --sys-prefix --symlink && \
+# jupyter-nbextension enable rise --py --sys-prefix && \
+# rm -rf /tmp/yarn* /tmp/nodejs* /tmp/npm* /tmp/v8* && \
+# cd -
 
 USER root
-RUN fix-permissions "/home/RISE"
+#RUN fix-permissions "/home/RISE"
 
 # done with custom install of RISE for lab
 
@@ -192,4 +198,7 @@ ENV USER=$NB_USER
 USER $NB_USER
 
 
+#adding checksum file dump
 
+USER root
+    RUN find / -path /proc -prune -o -type f 2>/dev/null -exec stat -c '%n %a' {} + | sha256sum > /home/jovyan/permissions_checksum.txt
