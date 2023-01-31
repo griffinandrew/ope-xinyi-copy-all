@@ -47,6 +47,6 @@ parse:
     - html_admonition
 
 execute:
-  execute_notebooks: "cache"
+  execute_notebooks: "force"
   allow_error: true
 

@@ -49,5 +49,5 @@ parse:
     - html_admonition
 
 execute:
-  execute_notebooks: "force" #if this is cache it will fail, had the same problem yesterday on my pc
+  execute_notebooks: "force"
   allow_error: true
