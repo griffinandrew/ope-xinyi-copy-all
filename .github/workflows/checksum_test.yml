@@ -1,8 +1,7 @@
 name: Checksum Test
 on:
   push:
-    branches:
-      - test-book
+    branches: [test-book]
 jobs:
   checksum:
     runs-on: unbuntu-latest
