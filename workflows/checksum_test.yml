@@ -7,7 +7,7 @@ jobs:
     runs-on: unbuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: set up python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
@@ -23,3 +23,7 @@ jobs:
           make build 
           echo "extracting the checksum" 
           docker image ls --digest --format '{{.Digest}}' ope-test
+          
+      - name: Clean build files
+        run: |
+          make clean
