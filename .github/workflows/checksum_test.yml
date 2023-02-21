@@ -20,10 +20,5 @@ jobs:
           pip install pandas 
       - name: run checksum
         run: |
-          make build 
-          echo "extracting the checksum" 
-          docker image ls --digest --format '{{.Digest}}' ope-test
-          
-      - name: Clean build files
-        run: |
-          make clean
+          make build #danni says that make build will extract checksum from image to local machine
+          echo "extracting the checksum"
