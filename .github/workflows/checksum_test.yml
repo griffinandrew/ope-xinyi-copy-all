@@ -1,4 +1,4 @@
-name: Checksum Test
+name: checksum
 on:
   push:
     branches: [test-book]
