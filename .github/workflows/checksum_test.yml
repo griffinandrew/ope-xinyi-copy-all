@@ -1,32 +1,26 @@
 name: Checksum Test
-
 on:
   push:
-    branches: [test-book]
-
-#This job will install dependencies, and verify a checksum                 
+    branches:
+      - test-book
 jobs:
-  checksum: 
+  checksum:
     runs-on: unbuntu-latest
     steps:
-    - uses: actions/checkout@v3
-            
-    - name: set up python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-
-    - name: Install dependencies 
-      run: |
-         #pip install -r requirements.txt
-         pip install jupyter-book
-         pip install matplotlib
-         pip install numpy 
-         pip install pandas 
-
-
-    - name: run checksum #build and run the docker_container and then compare file permissions checksum against the correct one
-      run: | 
-         make build 
-         echo "extracting the checksum" 
-         docker image ls --digest --format '{{.Digest}}' ope-test
+      - uses: actions/checkout@v3
+      - name: set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install dependencies
+        run: |
+          #pip install -r requirements.txt
+          pip install jupyter-book
+          pip install matplotlib
+          pip install numpy 
+          pip install pandas 
+      - name: run checksum
+        run: |
+          make build 
+          echo "extracting the checksum" 
+          docker image ls --digest --format '{{.Digest}}' ope-test
