@@ -1,9 +1,12 @@
+#!/bin/sh
 # this was seeded from https://github.com/umsi-mads/education-notebook/blob/master/Makefile
 .PHONEY: help build ope root push publish lab nb python-versions distro-versions image-sha clean
 .IGNORE: ope root
 
 # see if there is a specified customization in the base settting
 CUST := $(shell if  [[ -a base/customization_name ]]; then cat base/customization_name;  fi)
+
+CUST := checksum-test
 
 # User must specify customization suffix
 ifndef CUST
@@ -146,6 +149,12 @@ build: ## Make the image customized appropriately
 	make base/private_distro_versions.$(VERSION)
 	-rm base/private_image_info.$(VERSION)
 	make base/private_image_info.$(VERSION)
+	docker create --name tmp $(PRIVATE_REG)$(IMAGE)$(PRIVATE_TAG)
+	docker cp tmp:/home/jovyan/permissions_checksum.txt ./permissions_checksum.txt
+	docker rm tmp
+
+
+
 
 push: IMAGE = $(PRIVATE_IMAGE)
 push: DARGS ?=

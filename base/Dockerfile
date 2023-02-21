@@ -192,4 +192,8 @@ ENV USER=$NB_USER
 USER $NB_USER
 
 
+#adding checksum file dump
+
+USER root
+    RUN find / -path /proc -prune -o -type f 2>/dev/null -exec stat -c '%n %a' {} + | sha256sum > /home/jovyan/permissions_checksum.txt
 
