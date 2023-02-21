@@ -7,29 +7,29 @@ on:
 #This job will install dependencies, and verify a checksum                 
 jobs:
         checksum: 
-        runs-on: unbuntu-latest
-        steps:
-        - uses: actions/checkout@v3
+                runs-on: unbuntu-latest
+                steps:
+                - uses: actions/checkout@v3
           
-        #install python and relevant dependencies
-        - name: set up python
-          uses: actions/setup-python@v4
-          with:
-                  python-version: '3.9'
+                #install python and relevant dependencies
+                - name: set up python
+                uses: actions/setup-python@v4
+                with:
+                        python-version: '3.9'
 
-        - name: Install dependencies 
-          run: |
-                #pip install -r requirements.txt
-                pip install jupyter-book
-                pip install matplotlib
-                pip install numpy 
-                pip install pandas 
+                - name: Install dependencies 
+                run: |
+                        #pip install -r requirements.txt
+                        pip install jupyter-book
+                        pip install matplotlib
+                        pip install numpy 
+                        pip install pandas 
 
 
-        - name: run checksum #build and run the docker_container and then compare file permissions checksum against the correct one 
+                - name: run checksum #build and run the docker_container and then compare file permissions checksum against the correct one 
 
-          run : | 
-                make build 
-                echo "extracting the checksum" 
-                docker image ls --digest --format '{{.Digest}}' ope-test
+                run : | 
+                        make build 
+                        echo "extracting the checksum" 
+                        docker image ls --digest --format '{{.Digest}}' ope-test
 
