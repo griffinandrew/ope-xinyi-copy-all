@@ -1,0 +1,40 @@
+name: checksum
+on:
+  push:
+    branches: griffin-fork/container-jupyter-docker-stacks
+jobs:
+  checksum:
+    runs-on: ubuntu-latest #use the latest ubuntu container image 
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4 #use action to install python
+        with:
+          python-version: "3.9"
+      - name: Install dependencies #requirements docs unable to read, hard installing dependencies 
+        run: |
+          #pip install -r requirements.txt    
+          pip install jupyter-book matplotlib numpy pandas
+      - name: Build Docker image
+        run: |
+          docker build -t quay.io/rh_ee_keli/ucsls:stable-minimal-ope-full-devS23 .
+      - name: Verify image checksum
+        run: |
+          echo "VERIFYING IMAGE CHECKSUM"
+          PERMISSIONS_CHECKSUM=$( cat permissions_checksum.txt )
+          echo "displaying the pulled image checksum: $PERMISSIONS_CHECKSUM "
+          QUICK_TRIM=${PERMISSIONS_CHECKSUM::64} #quick_trim is used to get rid of the tailing "-" after the checksum
+          echo "displaying modified checksum: $QUICK_TRIM"
+          echo "COMPARING PULLED IMAGE CHECKSUM WITH CORRECT IMAGE CHECKSUM"
+          # Update the CHECKSUM variable with the correct value for the Docker image quay.io/rh_ee_keli/ucsls:stable-minimal-ope-full-devS23
+          CHECKSUM=ec2d1184374ceebbcca68d9b9feb588eef6c5845b87d44b7d37abc5358c7d877
+          if [[ "$QUICK_TRIM" == "$CHECKSUM" ]]; then
+            echo "VERIFICATION COMPLETE"
+            echo "SUCCESS" 
+            echo "checksum = $QUICK_TRIM"
+          else 
+            echo "VERIFICATION COMPLETE"
+            echo "FAILURE"
+            echo "checksum = $QUICK_TRIM does not match the correct image checksum = $CHECKSUM"
+            exit 1
+          fi
